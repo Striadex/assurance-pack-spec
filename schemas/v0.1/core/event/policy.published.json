@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/policy.published.json",
+  "title": "Event payload: policy.published (v0.1)",
+  "description": "Payload shape for policy.published events. Records the publication of a specific version of a policy. policy_eval events apply a particular version by referencing 'policyVersionId' via their 'policyVersionRef'. A policy.published event MAY live in a different Pack than the evaluations that reference it.",
+  "type": "object",
+  "properties": {
+    "policyId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable identifier for the policy across versions."
+    },
+    "policyVersionId": {
+      "type": "string",
+      "description": "Identifier of this specific published version. SHOULD be unique across all publications of this policy. Free-form string (semver, git hash, sequential int, URI, ...). Referenced from policy_eval events via 'policyVersionRef'."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name for the policy."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what the policy does."
+    },
+    "source": {
+      "type": "object",
+      "description": "Where the policy definition lives. Open shape. Typical fields: 'type' (e.g. 'rego', 'cedar', 'json'), 'uri', 'hash' (content hash, e.g. 'sha256:...'). SHOULD be present unless 'content' is — a publish event with neither is incomplete and validators SHOULD flag it."
+    },
+    "content": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ],
+      "description": "The policy content inline. SHOULD only be used for small policies; large policies SHOULD use 'source' with a content hash instead."
+    },
+    "publishedBy": {
+      "type": "object",
+      "description": "Who or what published this version. Open shape. Typical fields: 'type' (user, automation, etc.), 'id', 'display'."
+    },
+    "effectiveAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when this policy version becomes effective. MAY differ from envelope occurredAt (which is when the event was emitted). Implementers SHOULD set this to the moment the policy actually takes effect for evaluations."
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "policyVersionId of the previous version this one replaces. MAY be omitted for the initial publication of a policy."
+    }
+  },
+  "required": ["policyId", "policyVersionId"],
+  "additionalProperties": false
+}

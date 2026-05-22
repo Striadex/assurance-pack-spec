@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/subject.json",
+  "title": "Extended: subject (v0.1)",
+  "description": "Audience-neutral identification of the Pack's subject — what is being attested about. Carried under the Pack envelope's 'extended.subject' field.",
+  "type": "object",
+  "properties": {
+    "subjectId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable identifier for the subject. When the subject is an agent registered in the project, this SHOULD equal the agentId of the corresponding project.agent.registered event. For higher-level subjects (deployments, systems, projects) implementer-defined URIs are used."
+    },
+    "subjectType": {
+      "type": "string",
+      "description": "Kind of subject. Canonical values: 'agent', 'system', 'deployment', 'project'. Enumeration is OPEN — implementers MAY use other values, and validators MUST NOT reject solely on unknown values (per ADR 0005)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name for the subject."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the subject."
+    },
+    "version": {
+      "type": "string",
+      "description": "Version identifier for the subject at the time of attestation. Free-form string. Distinct from any agent/tool versioning recorded in project.*.registered events."
+    }
+  },
+  "required": ["subjectId", "subjectType"],
+  "additionalProperties": false
+}

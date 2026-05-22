@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/project.agent.registered.json",
+  "title": "Event payload: project.agent.registered (v0.1)",
+  "description": "Payload shape for project.agent.registered events. Declares an agent's identity, metadata, and capabilities in the project. run_started events reference an agent via agentRef matching this event's agentId. This event is project-state, not run-scoped.",
+  "type": "object",
+  "properties": {
+    "agentId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable identifier for the agent across versions. Referenced from run_started.agentRef."
+    },
+    "agentVersionId": {
+      "type": "string",
+      "description": "Identifier of this specific version of the agent. MAY be omitted if the implementer does not version agents. Free-form string (semver, git hash, sequential int, ...)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name. Implementers SHOULD provide at least a name; an agent identified only by an opaque URI is harder to audit."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what the agent does."
+    },
+    "owner": {
+      "type": "object",
+      "description": "Who owns / maintains the agent. Open shape. Typical fields: 'type' (team, individual, automation), 'id', 'display'."
+    },
+    "model": {
+      "type": "object",
+      "description": "Foundation model backing the agent. Open shape. Typical fields: 'name', 'version', 'provider'."
+    },
+    "instructions": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ],
+      "description": "System prompt or instructions defining the agent's behavior. Open shape. Implementers SHOULD provide a hash reference, summarised form, or other redacted representation for proprietary prompts rather than inlining sensitive content."
+    },
+    "allowedTools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "uniqueItems": true,
+      "description": "toolIds the agent is permitted to call (static allowlist). Runtime gating via policy is a separate mechanism. MAY be omitted if the implementer gates tool access entirely at runtime."
+    },
+    "effectiveAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this registration takes effect. MAY differ from envelope occurredAt."
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "agentVersionId of the previous version this registration replaces."
+    }
+  },
+  "required": ["agentId"],
+  "additionalProperties": false
+}

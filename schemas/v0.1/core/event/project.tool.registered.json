@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/project.tool.registered.json",
+  "title": "Event payload: project.tool.registered (v0.1)",
+  "description": "Payload shape for project.tool.registered events. Declares a tool's identity, metadata, and schema in the project. tool_call events reference a tool via toolRef matching this event's toolId. This event is project-state, not run-scoped.",
+  "type": "object",
+  "properties": {
+    "toolId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable identifier for the tool across versions. Referenced from tool_call.toolRef."
+    },
+    "toolVersionId": {
+      "type": "string",
+      "description": "Identifier of this specific version of the tool. MAY be omitted if the implementer does not version tools."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name. Implementers SHOULD provide at least a name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what the tool does."
+    },
+    "owner": {
+      "type": "object",
+      "description": "Who owns / maintains the tool. Open shape."
+    },
+    "schema": {
+      "type": "object",
+      "description": "Schema describing the tool's input and/or output. Open shape. Typical fields: 'input' (a JSON Schema or $ref to one), 'output' (a JSON Schema or $ref to one). Protobuf or other descriptor formats are permitted; implementers SHOULD prefer JSON Schema for interop."
+    },
+    "implementation": {
+      "type": "object",
+      "description": "How the tool is implemented. Open shape. Typical fields: 'type' (e.g. 'rest', 'function', 'mcp_server', 'subprocess'), 'endpoint', 'hash' (content hash of the implementation)."
+    },
+    "effectiveAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this registration takes effect. MAY differ from envelope occurredAt."
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "toolVersionId of the previous version this registration replaces."
+    }
+  },
+  "required": ["toolId"],
+  "additionalProperties": false
+}

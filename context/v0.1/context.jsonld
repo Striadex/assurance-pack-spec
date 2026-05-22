@@ -1,0 +1,101 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@protected": true,
+
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    "spec": "https://spec.striadex.ai/v0.1/vocab#",
+    "ai-act": "https://spec.striadex.ai/v0.1/vocab/eu-ai-act#",
+    "nist-rmf": "https://spec.striadex.ai/v0.1/vocab/nist-ai-rmf#",
+    "owasp": "https://spec.striadex.ai/v0.1/vocab/owasp-llm-top-10#",
+    "iso-27001": "https://spec.striadex.ai/v0.1/vocab/iso-27001#",
+    "iso-42001": "https://spec.striadex.ai/v0.1/vocab/iso-42001#",
+
+    "specVersion": "spec:specVersion",
+    "packId": { "@id": "spec:packId", "@type": "@id" },
+    "issuedAt": { "@id": "spec:issuedAt", "@type": "xsd:dateTime" },
+    "events": "spec:events",
+
+    "eventId": { "@id": "spec:eventId", "@type": "@id" },
+    "eventType": "spec:eventType",
+    "occurredAt": { "@id": "spec:occurredAt", "@type": "xsd:dateTime" },
+    "causality": "spec:causality",
+    "parents": { "@id": "spec:causalityParents", "@type": "@id", "@container": "@set" },
+    "contextEvents": { "@id": "spec:contextEvents", "@type": "@id", "@container": "@set" },
+    "payload": "spec:payload",
+
+    "extended": "spec:extended",
+
+    "subject": "spec:subject",
+    "subjectId": { "@id": "spec:subjectId", "@type": "@id" },
+    "subjectType": "spec:subjectType",
+    "issuer": "spec:issuer",
+    "issuerId": { "@id": "spec:issuerId", "@type": "@id" },
+    "issuerType": "spec:issuerType",
+
+    "runId": { "@id": "spec:runId", "@type": "@id" },
+    "agentRef": { "@id": "spec:agentRef", "@type": "@id" },
+    "agentId": { "@id": "spec:agentId", "@type": "@id" },
+    "agentVersionId": "spec:agentVersionId",
+    "toolCallId": { "@id": "spec:toolCallId", "@type": "@id" },
+    "toolRef": { "@id": "spec:toolRef", "@type": "@id" },
+    "toolId": { "@id": "spec:toolId", "@type": "@id" },
+    "toolVersionId": "spec:toolVersionId",
+    "policyEvalId": { "@id": "spec:policyEvalId", "@type": "@id" },
+    "policyRef": { "@id": "spec:policyRef", "@type": "@id" },
+    "policyId": { "@id": "spec:policyId", "@type": "@id" },
+    "policyVersionRef": "spec:policyVersionRef",
+    "policyVersionId": "spec:policyVersionId",
+
+    "decision": "spec:policyDecision",
+    "status": "spec:status",
+    "outcome": "spec:outcome",
+
+    "scope": "spec:scope",
+    "timeWindow": "spec:timeWindow",
+    "executionEvidence": "spec:executionEvidence",
+    "period": "spec:period",
+    "start": { "@id": "spec:periodStart", "@type": "xsd:dateTime" },
+    "end": { "@id": "spec:periodEnd", "@type": "xsd:dateTime" },
+    "effectiveAt": { "@id": "spec:effectiveAt", "@type": "xsd:dateTime" },
+    "assessedAt": { "@id": "spec:assessedAt", "@type": "xsd:dateTime" },
+    "attestedAt": { "@id": "spec:attestedAt", "@type": "xsd:dateTime" },
+    "lastAssessedAt": { "@id": "spec:lastAssessedAt", "@type": "xsd:dateTime" },
+
+    "incidentSummary": "spec:incidentSummary",
+    "humanOversightSummary": "spec:humanOversightSummary",
+
+    "supplyChain": "spec:supplyChain",
+    "models": "spec:supplyChainModels",
+    "tools": "spec:supplyChainTools",
+    "dataSources": "spec:supplyChainDataSources",
+    "dependencies": "spec:supplyChainDependencies",
+
+    "riskClassification": "spec:riskClassification",
+    "classifications": "spec:riskClassifications",
+    "framework": "spec:framework",
+    "classification": "spec:classification",
+    "aspects": "spec:classificationAspects",
+    "aiActRole": "ai-act:role",
+    "aiActArticles": { "@id": "ai-act:articles", "@container": "@set" },
+    "aiActRiskCategory": "ai-act:riskCategory",
+    "nistRmfFunction": "nist-rmf:function",
+    "nistRmfCategory": "nist-rmf:category",
+    "owaspLlmCategory": "owasp:category",
+
+    "controlAttestations": "spec:controlAttestations",
+    "frameworks": "spec:controlFrameworks",
+    "controls": "spec:controls",
+    "controlId": "spec:controlId",
+    "evidence": "spec:controlEvidence",
+    "eventRefs": { "@id": "spec:eventRefs", "@type": "@id", "@container": "@set" },
+    "exceptions": "spec:controlExceptions",
+    "compensatingControls": { "@id": "spec:compensatingControls", "@container": "@set" },
+    "attestor": "spec:attestor",
+    "methodology": "spec:attestationMethodology",
+    "justification": "spec:justification",
+
+    "attestations": "spec:supplyChainAttestations"
+  }
+}

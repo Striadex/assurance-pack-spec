@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event-envelope.json",
+  "title": "Assurance Pack Event Envelope (v0.1)",
+  "description": "Common envelope fields carried by every event in a Pack. The per-type payload is constrained by the corresponding event-type schema under schemas/v0.1/core/event/.",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Unique identifier for this event within the Pack. SHOULD be a URI (e.g. 'urn:uuid:...' or an HTTPS URL). MUST be unique among events in the same Pack."
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "run_started",
+        "run_completed",
+        "tool_call",
+        "tool_result",
+        "policy_eval",
+        "policy.published",
+        "project.agent.registered",
+        "project.tool.registered"
+      ],
+      "description": "One of the eight canonical event types defined in v0.1."
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 / ISO 8601 timestamp at which the event occurred."
+    },
+    "causality": {
+      "type": "object",
+      "description": "Causal relationship to other events in the same Pack. Distinct from the positional hash chain.",
+      "properties": {
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "uniqueItems": true,
+          "description": "eventIds of direct causal antecedents in the same Pack. MAY be empty for events with no antecedent (e.g. the first run_started of a run). MUST NOT contain forward references or cross-Pack references. The resulting graph MUST be acyclic."
+        }
+      },
+      "required": ["parents"],
+      "additionalProperties": false
+    },
+    "contextEvents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "uniqueItems": true,
+      "description": "eventIds of events that provide non-causal context for interpreting this event (e.g. a tool_call referencing the project.tool.registered event that defines its tool). Referenced events MAY also appear in causality.parents; the relationship is informational, not causal."
+    },
+    "prevHash": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" }
+      ],
+      "description": "Hash-chain backlink. For the first event in the Pack's events array, MUST be null. Otherwise, MUST be the base64url-encoded SHA-256 of the JCS canonicalisation of the immediately preceding event including its signature field. See docs/spec/v0.1/events.md for the chain construction."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-type-specific content. The shape is constrained by the schema corresponding to eventType (schemas/v0.1/core/event/<eventType>.json). Validators performing structural conformance MUST validate this object against that per-type schema."
+    },
+    "signature": {
+      "$ref": "signature.json"
+    }
+  },
+  "required": [
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "causality",
+    "prevHash",
+    "payload",
+    "signature"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/execution-evidence.json",
+  "title": "Extended: executionEvidence (v0.1)",
+  "description": "Audience-neutral summary of execution evidence within the Pack's scope. Aggregate counts and metadata about the events covered; not the raw events themselves (those live in core.events). Carried under the Pack envelope's 'extended.executionEvidence' field.",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Beginning of the actual coverage period (inclusive)."
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End of the actual coverage period (inclusive)."
+        }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "description": "Actual period covered by the execution evidence. MAY equal extended.scope.timeWindow or be a subset (e.g. when not all of the declared scope was instrumented)."
+    },
+    "counters": {
+      "type": "object",
+      "description": "Aggregate counts within the covered period. Open shape — implementers choose the structure. Conventional keys: 'runs.total', 'runs.byStatus.succeeded', 'runs.byStatus.failed', 'toolCalls.total', 'toolCalls.byOutcome.denied', 'policyEvals.total', 'policyEvals.byDecision.deny', 'incidents.total'. Flat dotted keys and nested objects are both acceptable."
+    },
+    "samplingMethod": {
+      "type": "object",
+      "description": "Describes any sampling applied (e.g. when the Pack covers a sample of runs rather than all runs in scope). Open shape. Typical fields: 'type' (e.g. 'random', 'stratified', 'exhaustive'), 'rate', 'criteria'. SHOULD be present whenever sampling is applied — omitting it when a sample is used is anti-audit and validators SHOULD flag any Pack whose counters appear inconsistent with the declared scope."
+    },
+    "dataIntegrity": {
+      "type": "object",
+      "description": "Claims about completeness and integrity of the underlying data. Open shape. Typical fields: 'signatureCoverage' (fraction of events with valid signatures), 'chainCompleteness' (whether the hash chain is unbroken across the period), 'reconstructibility' (fraction of runs whose state can be fully reconstructed from the recorded events). Distinct from cryptographic verification — these are claims by the issuer about the data, not properties verifiable from the Pack bytes alone."
+    }
+  },
+  "additionalProperties": false
+}

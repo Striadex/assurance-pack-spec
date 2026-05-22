@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/tool_call.json",
+  "title": "Event payload: tool_call (v0.1)",
+  "description": "Payload shape for tool_call events. Records the agent's invocation of a tool. The outcome (success, error, denied, timeout, or other) is recorded in a subsequent tool_result event with a matching toolCallId.",
+  "type": "object",
+  "properties": {
+    "toolCallId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Unique identifier for this specific tool invocation within the run. The corresponding tool_result event MUST carry this exact value."
+    },
+    "runId": {
+      "type": "string",
+      "format": "uri",
+      "description": "The run this tool call belongs to. MUST match the runId of the run_started for the surrounding run."
+    },
+    "toolRef": {
+      "type": "string",
+      "format": "uri",
+      "description": "toolId of the tool being invoked. SHOULD correspond to the toolId in a project.tool.registered event (in this Pack or resolvable elsewhere)."
+    },
+    "toolName": {
+      "type": "string",
+      "description": "Human-readable display name for the tool. Convenience only — 'toolRef' is the canonical identifier."
+    },
+    "input": {
+      "description": "Arguments passed to the tool. Open shape, any JSON type. Implementers SHOULD preserve the structured form (object) rather than serialising to a string. SHOULD be present unless the tool takes no input."
+    }
+  },
+  "required": ["toolCallId", "runId", "toolRef"],
+  "additionalProperties": false
+}

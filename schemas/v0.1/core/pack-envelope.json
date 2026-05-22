@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/pack-envelope.json",
+  "title": "Assurance Pack Envelope (v0.1)",
+  "description": "Top-level Pack object. Carries the @context URL, semver, identifier, issuance timestamp, ordered events array, optional extended/extensions content, and Pack-level signature. The Pack signature signs the JCS canonicalisation of this object with the top-level 'signature' field removed.",
+  "type": "object",
+  "properties": {
+    "@context": {
+      "type": "string",
+      "const": "https://spec.striadex.ai/v0.1/context.jsonld",
+      "description": "JSON-LD context URL. For v0.1 Packs, MUST be exactly this string. Array form is not permitted in v0.1; relaxation is additive future work."
+    },
+    "specVersion": {
+      "type": "string",
+      "pattern": "^0\\.1\\.[0-9]+$",
+      "description": "Plain semver string. For Packs validating against this v0.1 envelope, MUST match '0.1.<patch>'. The MAJOR.MINOR encoded here MUST match the MAJOR.MINOR in the @context URL."
+    },
+    "packId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Unique identifier for this Pack. SHOULD be a URI (e.g. 'urn:uuid:...' or an HTTPS URL). Globally unique: two artifacts sharing the same packId MUST be byte-identical."
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 / ISO 8601 timestamp at which the Pack was issued. Distinct from any event's occurredAt."
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "event-envelope.json" },
+      "description": "Ordered, non-empty array of events. Each item MUST validate against the event envelope; structural conformance also requires each event's payload to validate against its per-type schema under event/. See docs/spec/v0.1/events.md."
+    },
+    "extended": {
+      "type": "object",
+      "description": "Optional audience-neutral evidence shapes. All properties are optional but closed: only the properties listed below are permitted in v0.1. Audience-specific or implementer-specific content belongs under 'extensions'. See ADR 0005.",
+      "properties": {
+        "subject": { "$ref": "../extended/subject.json" },
+        "issuer": { "$ref": "../extended/issuer.json" },
+        "scope": { "$ref": "../extended/scope.json" },
+        "executionEvidence": { "$ref": "../extended/execution-evidence.json" },
+        "incidentSummary": { "$ref": "../extended/incident-summary.json" },
+        "humanOversightSummary": { "$ref": "../extended/human-oversight-summary.json" },
+        "supplyChain": { "$ref": "../extended/supply-chain.json" },
+        "riskClassification": { "$ref": "../extended/risk-classification.json" },
+        "controlAttestations": { "$ref": "../extended/control-attestations.json" }
+      },
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Implementer-defined slots. Keys are implementer namespaces (e.g. 'striadex', 'acme.audit'). The spec defines only the slot; the value shape is the implementer's responsibility and is documented externally. See ADR 0005 and docs/spec/v0.1/extensions.md.",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "signature": { "$ref": "signature.json" }
+  },
+  "required": [
+    "@context",
+    "specVersion",
+    "packId",
+    "issuedAt",
+    "events",
+    "signature"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/signature.json",
+  "title": "Detached JWS Signature (v0.1)",
+  "description": "A detached JWS compact serialisation (RFC 7515) of the form '<protected-header>..<signature>' where the middle (payload) segment is empty. The signed bytes are supplied out-of-band and MUST be the JCS canonicalisation (RFC 8785) of the enclosing object with the 'signature' field removed. The base64url-encoded protected header MUST contain 'alg':'EdDSA' and a 'kid' string identifying the signing key. See ADR 0004 and docs/spec/v0.1/signing.md.",
+  "type": "string",
+  "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"
+}
