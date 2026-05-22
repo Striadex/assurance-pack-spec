@@ -23,16 +23,65 @@ jobs:
 
       - name: Assemble site
         run: |
-          # GitHub Pages will serve schemas, context, examples, and docs at spec.striadex.ai
-          # via the CNAME file at the repo root. The layout below mirrors the URL structure
-          # that Packs reference (e.g. https://spec.striadex.ai/v0.1/schemas/...).
-          mkdir -p _site
-          cp -r schemas _site/
-          cp -r context _site/
-          cp -r examples _site/
+          # The deployed URL structure MUST match the $id values baked into the schemas
+          # and the @context URL referenced in every signed Pack (per ADR 0003: disjoint
+          # /v{MAJOR.MINOR}/ trees). On disk the repo organises by function-then-version
+          # (schemas/v0.1/..., context/v0.1/..., examples/v0.1/...) for ergonomic browsing,
+          # but the site is version-then-function (/v0.1/schemas/..., /v0.1/context.jsonld,
+          # /v0.1/examples/...). This step rearranges the on-disk layout for deployment.
+          set -e
+          mkdir -p _site/v0.1/schemas _site/v0.1/examples
+
+          # schemas/v0.1/<rest> → _site/v0.1/schemas/<rest>
+          cp -r schemas/v0.1/. _site/v0.1/schemas/
+
+          # context/v0.1/<rest> → _site/v0.1/<rest>  (so context.jsonld lands at /v0.1/context.jsonld)
+          cp -r context/v0.1/. _site/v0.1/
+
+          # examples/v0.1/<rest> → _site/v0.1/examples/<rest>
+          cp -r examples/v0.1/. _site/v0.1/examples/
+
+          # docs are not URL-versioned; mirror the repo tree for human browsing.
           cp -r docs _site/docs
+
           cp README.md _site/index.md
           cp CNAME _site/
+
+      - name: Verify durable URLs are populated
+        run: |
+          # Fail the deployment if the URLs referenced by schema $id values
+          # or the @context constant are not present in the assembled site.
+          set -e
+          for f in \
+            _site/v0.1/context.jsonld \
+            _site/v0.1/schemas/core/pack-envelope.json \
+            _site/v0.1/schemas/core/event-envelope.json \
+            _site/v0.1/schemas/core/signature.json \
+            _site/v0.1/schemas/core/event/run_started.json \
+            _site/v0.1/schemas/core/event/run_completed.json \
+            _site/v0.1/schemas/core/event/tool_call.json \
+            _site/v0.1/schemas/core/event/tool_result.json \
+            _site/v0.1/schemas/core/event/policy_eval.json \
+            _site/v0.1/schemas/core/event/policy.published.json \
+            _site/v0.1/schemas/core/event/project.agent.registered.json \
+            _site/v0.1/schemas/core/event/project.tool.registered.json \
+            _site/v0.1/schemas/extended/subject.json \
+            _site/v0.1/schemas/extended/issuer.json \
+            _site/v0.1/schemas/extended/scope.json \
+            _site/v0.1/schemas/extended/execution-evidence.json \
+            _site/v0.1/schemas/extended/incident-summary.json \
+            _site/v0.1/schemas/extended/human-oversight-summary.json \
+            _site/v0.1/schemas/extended/supply-chain.json \
+            _site/v0.1/schemas/extended/risk-classification.json \
+            _site/v0.1/schemas/extended/control-attestations.json \
+            _site/v0.1/examples/valid-pack.json \
+            _site/v0.1/examples/invalid-pack-bad-signature.json; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              exit 1
+            fi
+          done
+          echo "All durable v0.1 URLs are populated."
 
       - uses: actions/upload-pages-artifact@v3
         with:
