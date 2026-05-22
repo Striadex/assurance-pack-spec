@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/run_started.json",
+  "title": "Event payload: run_started (v0.1)",
+  "description": "Payload shape for run_started events. Carried inside the envelope's 'payload' field. Marks the beginning of an agent run.",
+  "type": "object",
+  "properties": {
+    "runId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Unique identifier for this run. All events relating to the same run (tool_call, tool_result, run_completed, ...) MUST carry this exact value in their payloads where applicable."
+    },
+    "agentRef": {
+      "type": "string",
+      "format": "uri",
+      "description": "agentId of the agent performing this run. SHOULD correspond to the agentId in a project.agent.registered event (in this Pack or resolvable elsewhere)."
+    },
+    "objective": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ],
+      "description": "What the agent was asked to accomplish. Free text or structured object — open shape, no validation beyond presence and being string-or-object. Implementers SHOULD provide a human-readable rendering even if the canonical form is structured."
+    },
+    "initiator": {
+      "type": "object",
+      "description": "Who or what triggered the run. Open shape. Typical fields: 'type' (e.g. user, agent, schedule, api), 'id', 'display'. Validators MUST NOT reject unknown fields here."
+    },
+    "initialInput": {
+      "description": "The starting input to the run (prompt, parameters, structured request). Open shape, any JSON type. MAY be omitted for runs whose input is recorded out-of-band — in that case SHOULD reference the out-of-band record via a contextEvent or via 'initiator'."
+    },
+    "runtime": {
+      "type": "object",
+      "description": "Informational metadata about the runtime environment. Typical fields: 'model', 'modelVersion', 'orchestrator', 'orchestratorVersion', 'host'. Open shape."
+    },
+    "correlationId": {
+      "type": "string",
+      "description": "Cross-system trace identifier (e.g. an OpenTelemetry trace ID or a request ID). Free-form string; no format constraint."
+    }
+  },
+  "required": ["runId", "agentRef"],
+  "additionalProperties": false
+}

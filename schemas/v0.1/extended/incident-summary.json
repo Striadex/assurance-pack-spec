@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/incident-summary.json",
+  "title": "Extended: incidentSummary (v0.1)",
+  "description": "Audience-neutral summary of incidents that occurred within the Pack's scope. The taxonomy of severities, categories, and statuses is OPEN — implementers use whatever framework their incident-management practice prescribes (ITIL, NIST IR, AI Act categories, internal taxonomies). Carried under the Pack envelope's 'extended.incidentSummary' field.",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "description": "Period this summary covers. SHOULD equal or be a subset of extended.scope.timeWindow."
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of incidents in the period. Zero is a meaningful claim — 'zero incidents in scope' is itself an attestation, not an absence of data."
+    },
+    "bySeverity": {
+      "type": "object",
+      "description": "Counts keyed by severity label. Open keys — no locked taxonomy. Conventional labels: 'critical', 'high', 'medium', 'low', 'informational'."
+    },
+    "byCategory": {
+      "type": "object",
+      "description": "Counts keyed by category. Open keys. Conventional: 'policy_violation', 'safety', 'data_quality', 'operational_failure', 'security'."
+    },
+    "byStatus": {
+      "type": "object",
+      "description": "Counts keyed by resolution status. Open keys. Conventional: 'open', 'investigating', 'resolved', 'closed_no_action'."
+    },
+    "incidents": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Individual incident records. Open shape per item. Conventional fields: 'id', 'category', 'severity', 'occurredAt', 'status', 'summary', 'eventRefs' (eventIds in this Pack that document the triggering events). MAY be a subset of the total — e.g. critical/high incidents listed individually, lower severities aggregated only in counters."
+    }
+  },
+  "additionalProperties": false
+}

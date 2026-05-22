@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/policy_eval.json",
+  "title": "Event payload: policy_eval (v0.1)",
+  "description": "Payload shape for policy_eval events. Records the evaluation of a specific policy version against a subject, with the resulting decision and optional reasoning. References a policy version via 'policyVersionRef', which MUST match the 'policyVersionId' of some policy.published event (in this Pack or resolvable elsewhere).",
+  "type": "object",
+  "properties": {
+    "policyEvalId": {
+      "type": "string",
+      "format": "uri",
+      "description": "Unique identifier for this specific evaluation. Used when other events reference this evaluation in their envelope causality.parents or contextEvents (e.g. a tool_result with outcome 'denied' referencing the policy_eval that produced the denial)."
+    },
+    "runId": {
+      "type": "string",
+      "format": "uri",
+      "description": "The run this evaluation belongs to. MAY be omitted for project-level evaluations not associated with a single run."
+    },
+    "policyRef": {
+      "type": "string",
+      "format": "uri",
+      "description": "Stable identifier for the policy across versions. SHOULD correspond to the 'policyId' in one or more policy.published events."
+    },
+    "policyVersionRef": {
+      "type": "string",
+      "description": "Identifier of the specific policy version applied in this evaluation. MUST match the 'policyVersionId' of the policy.published event that established this version. Free-form string — implementers may use semver, git hashes, URIs, or sequential integers, consistent across their own events."
+    },
+    "decision": {
+      "type": "string",
+      "description": "The outcome of the evaluation. Canonical values: 'allow', 'deny', 'require_review', 'error'. Enumeration is OPEN — implementers MAY use other values, and validators MUST NOT reject solely on unknown values (per ADR 0005)."
+    },
+    "subject": {
+      "type": "object",
+      "description": "What was evaluated. Open shape. Typical fields: 'type' (e.g. 'tool_call', 'action', 'input', 'registration'), 'ref' (an eventId or other reference; SHOULD also appear in the envelope's contextEvents when it is an eventId in this Pack), 'description'. SHOULD be present unless the policy applies to ambient context with no specific subject."
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Data the policy considered (attributes, request body, context). Open shape. Distinct from 'subject': subject identifies what is being judged, inputs are the data the policy actually looked at to make its decision."
+    },
+    "reasoning": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ],
+      "description": "Explanation of the decision. Free text or structured (rule trace, satisfied/unsatisfied predicates, etc.). Open shape."
+    }
+  },
+  "required": ["policyEvalId", "policyRef", "policyVersionRef", "decision"],
+  "additionalProperties": false
+}

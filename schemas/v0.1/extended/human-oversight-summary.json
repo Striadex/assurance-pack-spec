@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/human-oversight-summary.json",
+  "title": "Extended: humanOversightSummary (v0.1)",
+  "description": "Audience-neutral summary of human oversight actions (approvals, interventions, reviews, escalations) that occurred within the Pack's scope. Particularly relevant for regulatory frameworks that mandate human oversight of high-risk AI systems (EU AI Act Article 14, NIST AI RMF Govern functions, etc.). The taxonomy of oversight types and outcomes is OPEN. Carried under the Pack envelope's 'extended.humanOversightSummary' field.",
+  "type": "object",
+  "properties": {
+    "period": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "description": "Period this summary covers. SHOULD equal or be a subset of extended.scope.timeWindow."
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of human oversight actions in the period. Zero is meaningful but ambiguous: it may indicate fully autonomous operation, or it may indicate missing oversight where oversight was expected. The audit interpretation depends on context (subject type, riskClassification, controlAttestations)."
+    },
+    "byType": {
+      "type": "object",
+      "description": "Counts keyed by oversight action type. Open keys. Conventional: 'approval', 'intervention', 'review', 'escalation'."
+    },
+    "byOutcome": {
+      "type": "object",
+      "description": "Counts keyed by outcome. Open keys. Conventional: 'approved', 'denied', 'modified', 'no_action'."
+    },
+    "events": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Individual oversight action records. Open shape per item. Conventional fields: 'id', 'type', 'occurredAt', 'actor' (who performed the oversight — open shape; may be human, automation, committee), 'subject' (what was overseen, e.g. an eventId or runId), 'outcome', 'summary', 'eventRefs' (eventIds in this Pack that document the triggering events)."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/scope.json",
+  "title": "Extended: scope (v0.1)",
+  "description": "Audience-neutral description of what the Pack covers — the boundary of the attestation. Carried under the Pack envelope's 'extended.scope' field. Other attestation claims in the Pack (e.g. controlAttestations) apply to the scope defined here.",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the boundary. Required when scope is present so that auditors have a textual statement of what is being attested about. The structured fields below (timeWindow, environments, runs) supplement but do not replace this."
+    },
+    "timeWindow": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Beginning of the time window (inclusive)."
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "End of the time window (inclusive). MAY be omitted for ongoing scopes ('from start onwards')."
+        }
+      },
+      "required": ["start"],
+      "additionalProperties": false,
+      "description": "Time boundary of the scope. SHOULD be present for time-bounded attestations."
+    },
+    "environments": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Environment identifiers covered by the attestation (e.g. 'production', 'staging', or implementer-defined URIs). MAY be omitted when scope is not environment-bounded."
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "uniqueItems": true,
+      "description": "Specific runIds covered by the attestation. Useful for run-aggregated Packs that explicitly enumerate which runs are in scope. Distinct from core.events: these are runId references, not event references."
+    }
+  },
+  "required": ["description"],
+  "additionalProperties": false
+}

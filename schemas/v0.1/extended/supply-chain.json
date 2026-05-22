@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/supply-chain.json",
+  "title": "Extended: supplyChain (v0.1)",
+  "description": "Audience-neutral declaration of the supply chain underlying the subject — what models, tools, data, dependencies, and upstream attestations the system relies on. All arrays are OPEN — implementers categorise components as their inventory practice prescribes. Carried under the Pack envelope's 'extended.supplyChain' field.",
+  "type": "object",
+  "properties": {
+    "models": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Foundation models in use. Open shape per item. Conventional fields: 'name', 'version', 'provider', 'modelCard' (uri), 'trainingDataDescription', 'license'."
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string", "format": "uri" },
+          { "type": "object" }
+        ]
+      },
+      "description": "Tools the subject uses. Each item MAY be a URI (typically a toolId matching a project.tool.registered event) or an open-shape object with more detail. Conventional object fields: 'toolRef' (uri), 'name', 'provider'."
+    },
+    "dataSources": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Data sources — training data for issuer-trained models, operational data inputs, retrieval corpora. Open shape per item. Conventional fields: 'name', 'type' (e.g. 'training', 'operational', 'retrieval'), 'provider', 'license', 'dataCard' (uri), 'collectionPeriod'."
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Software dependencies (libraries, SDKs), infrastructure providers, and other AI systems consumed. Open shape per item. Conventional fields: 'name', 'version', 'provider', 'type' (e.g. 'library', 'sdk', 'sub-agent', 'infrastructure'), 'license'."
+    },
+    "attestations": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Upstream attestations received from suppliers — SBOMs, SLSA provenance, model cards, data cards, supplier audit reports. Open shape per item. Conventional fields: 'type' (e.g. 'SBOM', 'SLSA-L3', 'model_card', 'data_card', 'audit_report'), 'uri', 'hash', 'validFrom', 'validUntil', 'issuer'. These form the chain-of-trust upstream of this Pack — verifiers MAY follow them to validate provenance claims."
+    }
+  },
+  "additionalProperties": false
+}

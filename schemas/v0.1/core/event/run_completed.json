@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/run_completed.json",
+  "title": "Event payload: run_completed (v0.1)",
+  "description": "Payload shape for run_completed events. Carried inside the envelope's 'payload' field. Marks the termination of an agent run (success, failure, cancellation, or timeout).",
+  "type": "object",
+  "properties": {
+    "runId": {
+      "type": "string",
+      "format": "uri",
+      "description": "MUST match the runId of the corresponding run_started event. The run_started event SHOULD appear in this event's envelope causality.parents."
+    },
+    "status": {
+      "type": "string",
+      "description": "Terminal status of the run. The spec defines four canonical values: 'succeeded', 'failed', 'cancelled', 'timed_out'. The enumeration is OPEN — implementers MAY use other values, and validators MUST NOT reject solely on unknown values (per ADR 0005)."
+    },
+    "summary": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "object" }
+      ],
+      "description": "Human- or machine-readable outcome summary. Open shape."
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Counters and measurements: token usage, duration, tool-call count, retries, etc. Open keys — implementers choose. Typical fields: 'durationMs', 'inputTokens', 'outputTokens', 'toolCallCount'."
+    },
+    "finalOutput": {
+      "description": "The agent's final output to the initiator. Open shape, any JSON type."
+    },
+    "error": {
+      "type": "object",
+      "description": "Structured error information. SHOULD be present when 'status' indicates failure ('failed', 'timed_out'). Typical fields: 'type', 'code', 'message', 'stack'. Open shape."
+    }
+  },
+  "required": ["runId", "status"],
+  "additionalProperties": false
+}

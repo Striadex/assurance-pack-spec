@@ -1,0 +1,40 @@
+{
+  "@context": "https://spec.striadex.ai/v0.1/context.jsonld",
+  "specVersion": "0.1.0",
+  "packId": "urn:uuid:22222222-2222-2222-2222-222222222222",
+  "issuedAt": "2026-05-22T14:00:00Z",
+
+  "events": [
+    {
+      "eventId": "urn:uuid:bad-0001-1111-1111-111111111111",
+      "eventType": "run_started",
+      "occurredAt": "2026-05-22T13:00:00Z",
+      "causality": { "parents": [] },
+      "prevHash": null,
+      "payload": {
+        "runId": "urn:example:run:bad-signature-demo",
+        "agentRef": "urn:example:agent:customer-service-bot",
+        "objective": "Minimal run for negative-test demonstration."
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_BAD_E1..EXAMPLE_SIGNATURE_BAD_E1"
+    }
+  ],
+
+  "extended": {
+    "subject": {
+      "subjectId": "urn:example:agent:customer-service-bot",
+      "subjectType": "agent",
+      "name": "Customer Service Bot"
+    },
+    "issuer": {
+      "issuerId": "urn:example:org:acme-corp",
+      "issuerType": "organization",
+      "name": "Acme Corp"
+    },
+    "scope": {
+      "description": "Minimal negative-test Pack demonstrating Pack-level signature failure."
+    }
+  },
+
+  "signature": "INVALID_BAD_SIGNATURE_HEADER..THIS_PACK_SIGNATURE_IS_DELIBERATELY_BROKEN_FOR_NEGATIVE_TESTING"
+}

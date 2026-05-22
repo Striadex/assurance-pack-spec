@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/core/event/tool_result.json",
+  "title": "Event payload: tool_result (v0.1)",
+  "description": "Payload shape for tool_result events. Records the outcome of a tool invocation. Pairs with a tool_call event sharing the same toolCallId.",
+  "type": "object",
+  "properties": {
+    "toolCallId": {
+      "type": "string",
+      "format": "uri",
+      "description": "MUST match the toolCallId of the corresponding tool_call event. The tool_call event SHOULD appear in this event's envelope causality.parents."
+    },
+    "runId": {
+      "type": "string",
+      "format": "uri",
+      "description": "The run this tool result belongs to. MUST match the runId of the corresponding tool_call."
+    },
+    "outcome": {
+      "type": "string",
+      "description": "Terminal outcome of the tool invocation. The spec defines four canonical values: 'success', 'error', 'denied', 'timeout'. The enumeration is OPEN — implementers MAY use other values, and validators MUST NOT reject solely on unknown values (per ADR 0005). 'denied' covers policy-refused calls — see docs/spec/v0.1/events.md."
+    },
+    "output": {
+      "description": "What the tool returned. Open shape, any JSON type. SHOULD be present when 'outcome' is 'success'."
+    },
+    "error": {
+      "type": "object",
+      "description": "Structured error information. SHOULD be present when 'outcome' is 'error', 'denied', or 'timeout'. Typical fields: 'type', 'code', 'message'. Open shape."
+    },
+    "metrics": {
+      "type": "object",
+      "description": "Counters and measurements for this tool invocation: 'durationMs', 'bytesIn', 'bytesOut', 'retryCount', etc. Open keys."
+    }
+  },
+  "required": ["toolCallId", "runId", "outcome"],
+  "additionalProperties": false
+}

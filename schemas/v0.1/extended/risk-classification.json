@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.striadex.ai/v0.1/schemas/extended/risk-classification.json",
+  "title": "Extended: riskClassification (v0.1)",
+  "description": "Audience-neutral risk classification(s) of the subject. Multiple classifications can coexist — one subject may simultaneously be classified under EU AI Act, NIST AI RMF, ISO 42001, OWASP LLM categories, or implementer-defined frameworks. All values are OPEN — the spec does not lock in framework lists or category names. Vocab URIs for common framework terms (e.g. aiActRole, aiActArticles, OWASP categories) are mapped in the JSON-LD @context (see ADR 0002). Carried under the Pack envelope's 'extended.riskClassification' field.",
+  "type": "object",
+  "properties": {
+    "classifications": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Risk classifications, one per applied framework. Open shape per item. Conventional fields: 'framework' (e.g. 'eu-ai-act', 'nist-ai-rmf', 'iso-42001', 'owasp-llm-top-10'), 'version' (framework version), 'classification' (the label assigned, e.g. 'high-risk', 'limited-risk'), 'aspects' (sub-classifications within the framework — AI Act articles invoked, OWASP categories applicable, NIST RMF functions covered), 'justification' (text or structured rationale)."
+    },
+    "assessmentMethod": {
+      "type": "object",
+      "description": "How the classification(s) were determined. Open shape. Single object — one assessment method typically covers all classifications. Implementers with per-classification methodologies put detail under classifications[].justification. Typical fields: 'type' (e.g. 'self-assessment', 'third-party', 'automated'), 'assessor' (open shape), 'methodologyRef' (uri to the methodology used)."
+    },
+    "lastAssessedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp when the classification was last assessed. SHOULD be at or before the Pack's issuedAt — claiming an assessment from the future is logically inconsistent and validators SHOULD reject such Packs."
+    }
+  },
+  "additionalProperties": false
+}

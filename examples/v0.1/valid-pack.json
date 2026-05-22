@@ -1,0 +1,353 @@
+{
+  "@context": "https://spec.striadex.ai/v0.1/context.jsonld",
+  "specVersion": "0.1.0",
+  "packId": "urn:uuid:11111111-1111-1111-1111-111111111111",
+  "issuedAt": "2026-05-22T14:00:00Z",
+
+  "events": [
+    {
+      "eventId": "urn:uuid:e1-0001-1111-1111-111111111111",
+      "eventType": "project.agent.registered",
+      "occurredAt": "2026-05-20T10:00:00Z",
+      "causality": { "parents": [] },
+      "prevHash": null,
+      "payload": {
+        "agentId": "urn:example:agent:customer-service-bot",
+        "agentVersionId": "1.2.0",
+        "name": "Customer Service Bot",
+        "description": "Handles customer inquiries about orders, refunds, and account questions.",
+        "model": {
+          "name": "claude-sonnet-4-6",
+          "provider": "anthropic"
+        },
+        "allowedTools": ["urn:example:tool:refund-api"]
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E1..EXAMPLE_SIGNATURE_E1"
+    },
+    {
+      "eventId": "urn:uuid:e2-0002-2222-2222-222222222222",
+      "eventType": "project.tool.registered",
+      "occurredAt": "2026-05-20T10:01:00Z",
+      "causality": { "parents": [] },
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_1_BASE64URL",
+      "payload": {
+        "toolId": "urn:example:tool:refund-api",
+        "toolVersionId": "2.0.0",
+        "name": "Refund API",
+        "description": "Issues refunds for completed orders.",
+        "implementation": {
+          "type": "rest",
+          "endpoint": "https://api.example.com/refunds",
+          "hash": "sha256:EXAMPLE_TOOL_IMPL_HASH"
+        }
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E2..EXAMPLE_SIGNATURE_E2"
+    },
+    {
+      "eventId": "urn:uuid:e3-0003-3333-3333-333333333333",
+      "eventType": "policy.published",
+      "occurredAt": "2026-05-21T09:00:00Z",
+      "causality": { "parents": [] },
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_2_BASE64URL",
+      "payload": {
+        "policyId": "urn:example:policy:refund-approval",
+        "policyVersionId": "v3",
+        "name": "Refund Approval Policy",
+        "description": "Determines whether a refund may be auto-issued versus requiring human review.",
+        "source": {
+          "type": "rego",
+          "uri": "https://policies.example.com/refund-approval/v3.rego",
+          "hash": "sha256:EXAMPLE_POLICY_SOURCE_HASH"
+        },
+        "effectiveAt": "2026-05-21T09:00:00Z"
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E3..EXAMPLE_SIGNATURE_E3"
+    },
+    {
+      "eventId": "urn:uuid:e4-0004-4444-4444-444444444444",
+      "eventType": "run_started",
+      "occurredAt": "2026-05-22T13:00:00Z",
+      "causality": { "parents": [] },
+      "contextEvents": ["urn:uuid:e1-0001-1111-1111-111111111111"],
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_3_BASE64URL",
+      "payload": {
+        "runId": "urn:example:run:abc-12345",
+        "agentRef": "urn:example:agent:customer-service-bot",
+        "objective": "Handle the customer's refund request for order ORD-9876.",
+        "initiator": {
+          "type": "user",
+          "id": "urn:example:user:jane-doe",
+          "display": "Jane Doe"
+        },
+        "initialInput": {
+          "message": "I'd like a refund for order ORD-9876, it arrived broken.",
+          "orderId": "ORD-9876"
+        },
+        "runtime": {
+          "model": "claude-sonnet-4-6",
+          "orchestrator": "example-orchestrator",
+          "orchestratorVersion": "1.0.0"
+        }
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E4..EXAMPLE_SIGNATURE_E4"
+    },
+    {
+      "eventId": "urn:uuid:e5-0005-5555-5555-555555555555",
+      "eventType": "policy_eval",
+      "occurredAt": "2026-05-22T13:00:05Z",
+      "causality": { "parents": ["urn:uuid:e4-0004-4444-4444-444444444444"] },
+      "contextEvents": ["urn:uuid:e3-0003-3333-3333-333333333333"],
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_4_BASE64URL",
+      "payload": {
+        "policyEvalId": "urn:example:eval:pe-001",
+        "runId": "urn:example:run:abc-12345",
+        "policyRef": "urn:example:policy:refund-approval",
+        "policyVersionRef": "v3",
+        "decision": "allow",
+        "subject": {
+          "type": "action",
+          "description": "Issue refund for order ORD-9876, amount $89.50"
+        },
+        "inputs": {
+          "orderAmount": 89.50,
+          "orderAgeDays": 12,
+          "previousRefunds": 0
+        },
+        "reasoning": "Order age within 30-day window, amount below auto-approval threshold of $100, no prior refunds — auto-allow."
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E5..EXAMPLE_SIGNATURE_E5"
+    },
+    {
+      "eventId": "urn:uuid:e6-0006-6666-6666-666666666666",
+      "eventType": "tool_call",
+      "occurredAt": "2026-05-22T13:00:08Z",
+      "causality": {
+        "parents": [
+          "urn:uuid:e4-0004-4444-4444-444444444444",
+          "urn:uuid:e5-0005-5555-5555-555555555555"
+        ]
+      },
+      "contextEvents": [
+        "urn:uuid:e2-0002-2222-2222-222222222222",
+        "urn:uuid:e5-0005-5555-5555-555555555555"
+      ],
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_5_BASE64URL",
+      "payload": {
+        "toolCallId": "urn:example:toolcall:tc-001",
+        "runId": "urn:example:run:abc-12345",
+        "toolRef": "urn:example:tool:refund-api",
+        "toolName": "Refund API",
+        "input": {
+          "orderId": "ORD-9876",
+          "amount": 89.50,
+          "reason": "damaged_in_transit"
+        }
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E6..EXAMPLE_SIGNATURE_E6"
+    },
+    {
+      "eventId": "urn:uuid:e7-0007-7777-7777-777777777777",
+      "eventType": "tool_result",
+      "occurredAt": "2026-05-22T13:00:09Z",
+      "causality": { "parents": ["urn:uuid:e6-0006-6666-6666-666666666666"] },
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_6_BASE64URL",
+      "payload": {
+        "toolCallId": "urn:example:toolcall:tc-001",
+        "runId": "urn:example:run:abc-12345",
+        "outcome": "success",
+        "output": {
+          "refundId": "REF-54321",
+          "status": "issued",
+          "amount": 89.50
+        },
+        "metrics": {
+          "durationMs": 743
+        }
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E7..EXAMPLE_SIGNATURE_E7"
+    },
+    {
+      "eventId": "urn:uuid:e8-0008-8888-8888-888888888888",
+      "eventType": "run_completed",
+      "occurredAt": "2026-05-22T13:00:12Z",
+      "causality": {
+        "parents": [
+          "urn:uuid:e4-0004-4444-4444-444444444444",
+          "urn:uuid:e7-0007-7777-7777-777777777777"
+        ]
+      },
+      "prevHash": "EXAMPLE_PREV_HASH_OF_EVENT_7_BASE64URL",
+      "payload": {
+        "runId": "urn:example:run:abc-12345",
+        "status": "succeeded",
+        "summary": "Refund REF-54321 issued for $89.50 against order ORD-9876.",
+        "metrics": {
+          "durationMs": 12340,
+          "toolCallCount": 1,
+          "policyEvalCount": 1,
+          "inputTokens": 245,
+          "outputTokens": 187
+        },
+        "finalOutput": "I've issued a refund of $89.50 to your original payment method. You'll see it within 3-5 business days. The refund ID is REF-54321 in case you need to reference it. I'm sorry the item arrived damaged."
+      },
+      "signature": "EXAMPLE_PROTECTED_HEADER_E8..EXAMPLE_SIGNATURE_E8"
+    }
+  ],
+
+  "extended": {
+    "subject": {
+      "subjectId": "urn:example:agent:customer-service-bot",
+      "subjectType": "agent",
+      "name": "Customer Service Bot",
+      "description": "AI agent handling customer inquiries.",
+      "version": "1.2.0"
+    },
+    "issuer": {
+      "issuerId": "urn:example:org:acme-corp",
+      "issuerType": "organization",
+      "name": "Acme Corp",
+      "legalEntity": {
+        "jurisdiction": "DE",
+        "legalName": "Acme GmbH"
+      }
+    },
+    "scope": {
+      "description": "Single customer-service refund interaction by the Customer Service Bot on 2026-05-22.",
+      "timeWindow": {
+        "start": "2026-05-22T13:00:00Z",
+        "end": "2026-05-22T13:00:12Z"
+      },
+      "environments": ["production"],
+      "runs": ["urn:example:run:abc-12345"]
+    },
+    "executionEvidence": {
+      "period": {
+        "start": "2026-05-22T13:00:00Z",
+        "end": "2026-05-22T13:00:12Z"
+      },
+      "counters": {
+        "runs": { "total": 1, "byStatus": { "succeeded": 1 } },
+        "toolCalls": { "total": 1, "byOutcome": { "success": 1 } },
+        "policyEvals": { "total": 1, "byDecision": { "allow": 1 } },
+        "incidents": { "total": 0 }
+      },
+      "dataIntegrity": {
+        "signatureCoverage": 1.0,
+        "chainCompleteness": true
+      }
+    },
+    "incidentSummary": {
+      "period": {
+        "start": "2026-05-22T13:00:00Z",
+        "end": "2026-05-22T13:00:12Z"
+      },
+      "total": 0
+    },
+    "humanOversightSummary": {
+      "period": {
+        "start": "2026-05-22T13:00:00Z",
+        "end": "2026-05-22T13:00:12Z"
+      },
+      "total": 0,
+      "byType": { "approval": 0, "intervention": 0, "review": 0, "escalation": 0 }
+    },
+    "supplyChain": {
+      "models": [
+        {
+          "name": "claude-sonnet-4-6",
+          "version": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "modelCard": "https://www.anthropic.com/model-card"
+        }
+      ],
+      "tools": ["urn:example:tool:refund-api"],
+      "attestations": [
+        {
+          "type": "model_card",
+          "uri": "https://www.anthropic.com/model-card",
+          "issuer": "Anthropic"
+        }
+      ]
+    },
+    "riskClassification": {
+      "classifications": [
+        {
+          "framework": "eu-ai-act",
+          "version": "2024",
+          "classification": "limited-risk",
+          "aspects": {
+            "aiActRole": "deployer",
+            "aiActArticles": [50]
+          },
+          "justification": "Customer-facing AI assistant subject to transparency obligations under Article 50; not a high-risk system."
+        },
+        {
+          "framework": "owasp-llm-top-10",
+          "version": "2025",
+          "classification": "assessed",
+          "aspects": {
+            "applicableCategories": ["LLM01", "LLM02", "LLM06"]
+          }
+        }
+      ],
+      "assessmentMethod": {
+        "type": "self-assessment",
+        "assessor": { "type": "internal", "name": "Acme Compliance Team" }
+      },
+      "lastAssessedAt": "2026-05-15T00:00:00Z"
+    },
+    "controlAttestations": {
+      "frameworks": [
+        {
+          "framework": "eu-ai-act",
+          "version": "2024",
+          "controls": [
+            {
+              "controlId": "Article 50",
+              "name": "Transparency obligations for providers and deployers",
+              "status": "implemented",
+              "evidence": [
+                {
+                  "type": "process_record",
+                  "description": "Bot identifies itself as AI in all user-facing replies; opening message includes 'I'm an AI assistant'."
+                }
+              ],
+              "period": { "start": "2026-01-01T00:00:00Z" }
+            }
+          ]
+        },
+        {
+          "framework": "iso-42001",
+          "version": "2023",
+          "controls": [
+            {
+              "controlId": "6.1",
+              "name": "Actions to address risks and opportunities",
+              "status": "implemented",
+              "evidence": [
+                {
+                  "type": "event_ref",
+                  "eventRefs": ["urn:uuid:e5-0005-5555-5555-555555555555"],
+                  "description": "Policy evaluation events demonstrate risk-based decisioning."
+                }
+              ]
+            },
+            {
+              "controlId": "9.2",
+              "name": "Internal audit",
+              "status": "not_applicable",
+              "justification": "Scope of this Pack is a single interaction, not subject to an internal audit cycle."
+            }
+          ]
+        }
+      ],
+      "attestedAt": "2026-05-22T13:30:00Z",
+      "methodology": {
+        "type": "self-assessment",
+        "coverage": "subset"
+      }
+    }
+  },
+
+  "signature": "EXAMPLE_PROTECTED_HEADER_PACK..EXAMPLE_SIGNATURE_VALUE_FOR_PACK_ENVELOPE"
+}
